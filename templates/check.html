@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="NIDExpose - Check your NID exposure"
+    >
+
+    <title>NIDExpose — NID Exposure Checker</title>
+
+    <style>
+        :root {
+            --background: #07070a;
+            --surface: #101014;
+            --surface-light: #17171d;
+            --border: #292930;
+            --border-hover: #41414b;
+
+            --text: #f5f5f7;
+            --muted: #8d8d98;
+
+            --accent: #ffffff;
+            --accent-text: #000000;
+
+            --danger: #ff5f56;
+
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 50% -20%,
+                    #1b1b25 0%,
+                    #07070a 45%
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            width: 100%;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+            background: rgba(7, 7, 10, 0.75);
+
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--text);
+
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 30px;
+            height: 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .brand-name span {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #72e572;
+
+            box-shadow:
+                0 0 8px rgba(114, 229, 114, 0.5);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            min-height: calc(100vh - 72px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 70px 20px;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 560px;
+
+            text-align: center;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 24px;
+            padding: 7px 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 999px;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .badge-icon {
+            font-size: 12px;
+        }
+
+        h1 {
+            margin-bottom: 18px;
+
+            font-size: clamp(42px, 8vw, 68px);
+            line-height: 0.95;
+
+            font-weight: 800;
+
+            letter-spacing: -3px;
+        }
+
+        .hero-description {
+            max-width: 490px;
+
+            margin: 0 auto 38px;
+
+            color: var(--muted);
+
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           FORM CARD
+        ========================= */
+
+        .form-card {
+            width: 100%;
+
+            padding: 28px;
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.035),
+                    rgba(255, 255, 255, 0.01)
+                );
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        .form-header {
+            text-align: left;
+
+            margin-bottom: 22px;
+        }
+
+        .form-title {
+            margin-bottom: 6px;
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .form-subtitle {
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .field {
+            text-align: left;
+        }
+
+        .field label {
+            display: block;
+
+            margin-bottom: 9px;
+
+            color: #d7d7dc;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 15px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #666670;
+
+            font-size: 14px;
+
+            pointer-events: none;
+        }
+
+        .field input {
+            width: 100%;
+
+            height: 52px;
+
+            padding: 0 15px 0 43px;
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+
+            outline: none;
+
+            background: #09090c;
+
+            color: var(--text);
+
+            font-family: monospace;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .field input::placeholder {
+            color: #4e4e58;
+        }
+
+        .field input:hover {
+            border-color: var(--border-hover);
+        }
+
+        .field input:focus {
+            border-color: #70707b;
+
+            box-shadow:
+                0 0 0 3px rgba(255, 255, 255, 0.05);
+        }
+
+        /* =========================
+           ERRORS
+        ========================= */
+
+        .error-list {
+            margin-top: 9px;
+
+            text-align: left;
+
+            color: var(--danger);
+
+            font-size: 12px;
+        }
+
+        .error-list p {
+            margin-top: 4px;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .submit-button {
+            width: 100%;
+            height: 52px;
+
+            margin-top: 18px;
+
+            border: none;
+            border-radius: var(--radius);
+
+            background: var(--accent);
+            color: var(--accent-text);
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
+        }
+
+        .submit-button:hover {
+            opacity: 0.88;
+        }
+
+        .submit-button:active {
+            transform: scale(0.985);
+        }
+
+        /* =========================
+           PRIVACY
+        ========================= */
+
+        .privacy {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+
+            margin-top: 20px;
+
+            text-align: left;
+
+            color: #62626c;
+
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .privacy-icon {
+            flex-shrink: 0;
+
+            margin-top: 1px;
+
+            font-size: 12px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 28px;
+
+            color: #4e4e57;
+
+            font-size: 11px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .nav-status {
+                display: none;
+            }
+
+            .main {
+                padding: 50px 16px;
+            }
+
+            h1 {
+                letter-spacing: -2px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="navbar">
+
+        <a href="{% url 'nid_check' %}" class="brand">
+
+            <div class="brand-icon">
+                NX
+            </div>
+
+            <div class="brand-name">
+                NID<span>Expose</span>
+            </div>
+
+        </a>
+
+        <div class="nav-status">
+
+            <span class="status-dot"></span>
+
+            System operational
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+        <div class="wrapper">
+
+            <div class="badge">
+
+                <span class="badge-icon">◉</span>
+
+                Identity Exposure Intelligence
+
+            </div>
+
+
+            <h1>
+                NIDExpose
+            </h1>
+
+
+            <p class="hero-description">
+
+                Check whether your NID information may have
+                appeared in known exposed datasets.
+
+            </p>
+
+
+            <!-- =========================
+                 FORM
+            ========================== -->
+
+            <div class="form-card">
+
+                <div class="form-header">
+
+                    <div class="form-title">
+                        Start an exposure check
+                    </div>
+
+                    <div class="form-subtitle">
+                        Enter your NID card number below to begin.
+                    </div>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{% url 'nid_check' %}"
+                >
+
+                    {% csrf_token %}
+
+
+                    <div class="field">
+
+                        <label
+                            for="{{ form.nid_number.id_for_label }}"
+                        >
+                            NID Card Number
+                        </label>
+
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                #
+                            </span>
+
+                            {{ form.nid_number }}
+
+                        </div>
+
+
+                        {% if form.nid_number.errors %}
+
+                            <div class="error-list">
+
+                                {% for error in form.nid_number.errors %}
+
+                                    <p>
+                                        {{ error }}
+                                    </p>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                    >
+                        Check Exposure
+                    </button>
+
+                </form>
+
+
+                <div class="privacy">
+
+                    <span class="privacy-icon">
+                        🔒
+                    </span>
+
+                    <span>
+                        Your submitted information is processed
+                        for the purpose of this exposure check.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer">
+
+                NIDExpose · Identity exposure monitoring
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
+
+
