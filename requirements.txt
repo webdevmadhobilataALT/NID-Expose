@@ -17,3 +17,4 @@ crispy-bootstrap5
 python-dotenv
 requests
 Pillow
+gunicorn
